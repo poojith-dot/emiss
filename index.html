@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container" id="login-container">
+        <div class="login-box">
+            <h1>Welcome</h1>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="login()">Login</button>
+            <p id="error-message" class="error-message"></p>
+        </div>
+    </div>
+    
+    <div class="container" id="vehicle-container" style="display:none;">
+        <div class="vehicle-box">
+            <h1>Vehicle Information</h1>
+            <input type="text" id="vehicle-number" placeholder="Enter Vehicle Number">
+            <button onclick="checkVehicle()">Check</button>
+            <div id="vehicle-data"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
