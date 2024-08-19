@@ -1,31 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Video Analyzer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3e8e41;
+        }
+
+        .shorts-container, .random-game-video-container {
+            margin-top: 40px;
+        }
+
+        .shorts-container h2, .random-game-video-container h2 {
+            margin-bottom: 10px;
+        }
+
+        #shorts, #randomGameVideo {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .short-video {
+            width: 200px;
+            margin: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .short-video video {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container" id="login-container">
-        <div class="login-box">
-            <h1>Welcome</h1>
-            <input type="text" id="username" placeholder="Username">
-            <input type="password" id="password" placeholder="Password">
-            <button onclick="login()">Login</button>
-            <p id="error-message" class="error-message"></p>
+    <div class="container">
+        <h1>Video Analyzer</h1>
+        <input type="text" id="videoUrl" placeholder="Enter YouTube video URL">
+        <button id="analyze">Analyze</button>
+        <div class="shorts-container">
+            <h2>Short Clips</h2>
+            <div id="shorts"></div>
+        </div>
+        <div class="random-game-video-container">
+            <h2>Random Game Video</h2>
+            <div id="randomGameVideo"></div>
         </div>
     </div>
-    
-    <div class="container" id="vehicle-container" style="display:none;">
-        <div class="vehicle-box">
-            <h1>Vehicle Information</h1>
-            <input type="text" id="vehicle-number" placeholder="Enter Vehicle Number">
-            <button onclick="checkVehicle()">Check</button>
-            <div id="vehicle-data"></div>
-        </div>
-    </div>
+    <script>
+        const analyzeButton = document.getElementById('analyze');
+        const videoUrlInput = document.getElementById('videoUrl');
+        const shortsContainer = document.getElementById('shorts');
+        const randomGameVideoContainer = document.getElementById('randomGameVideo');
 
-    <script src="script.js"></script>
+        analyzeButton.addEventListener('click', () => {
+            const videoUrl = videoUrlInput.value;
+
+            fetch('http://localhost:8080/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url: videoUrl }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const shortClips = data;
+
+                shortClips.forEach(clipUrl => {
+                    const video = document.createElement('video');
+                    video.src = clipUrl; // Replace with actual video source
+                    video.controls = true;
+                    video.classList.add('short-video');
+                    shortsContainer.appendChild(video);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
 </body>
 </html>
