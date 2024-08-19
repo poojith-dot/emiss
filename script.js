@@ -1,19 +1,26 @@
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.videoio.VideoCapture;
+import org.opencv.videoio.VideoWriter;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.videoio.VideoCapture;
-import org.opencv.videoio.VideoWriter;
-
+@SpringBootApplication
 @RestController
-public class VideoAnalyzerController {
+public class VideoAnalyzer {
+
+    public static void main(String[] args) {
+        SpringApplication.run(VideoAnalyzer.class, args);
+    }
 
     @PostMapping("/analyze")
     public ResponseEntity<List<String>> analyzeVideo(@RequestParam String url) throws IOException {
@@ -98,11 +105,11 @@ public class VideoAnalyzerController {
     }
 
     private String saveShortClip(String youtubeUrl, VideoWriter writer, VideoCapture capture, int frameCount, int frameWidth, int frameHeight, int fps) {
-        // Create output video URL
-        String shortClipUrl = youtubeUrl + "?start=" + (capture.get(VideoCapture.PROP_POS_FRAMES) - frameCount) + "&end=" + capture.get(VideoCapture.PROP_POS_FRAMES);
+        // Create output video file
+        File outputFile = File.createTempFile("short-clip", ".mp4");
 
         // Open VideoWriter
-        writer.open(shortClipUrl, VideoWriter.fourcc('M', 'J', 'P', 'G'), fps, new Size(frameWidth, frameHeight));
+        writer.open(outputFile.getAbsolutePath(), VideoWriter.fourcc('M', 'J', 'P', 'G'), fps, new org.opencv.core.Size(frameWidth, frameHeight));
 
         // Write frames to output video
         for (int i = 0; i < frameCount; i++) {
@@ -116,6 +123,6 @@ public class VideoAnalyzerController {
         // Release resources
         writer.release();
 
-        return shortClipUrl;
+        return outputFile.getAbsolutePath();
     }
 }
