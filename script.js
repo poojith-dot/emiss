@@ -4,6 +4,7 @@ import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.VideoWriter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,12 +24,16 @@ public class VideoAnalyzer {
     }
 
     @PostMapping("/analyze")
-    public ResponseEntity<List<String>> analyzeVideo(@RequestParam String url) throws IOException {
-        List<String> shortClipUrls = generateShortClips(url);
-        return ResponseEntity.ok(shortClipUrls);
+    public ResponseEntity<List<String>> analyzeVideo(@RequestParam String url) {
+        try {
+            List<String> shortClipUrls = generateShortClips(url);
+            return ResponseEntity.ok(shortClipUrls);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
-    private List<String> generateShortClips(String youtubeUrl) {
+    private List<String> generateShortClips(String youtubeUrl) throws IOException {
         List<String> shortClipUrls = new ArrayList<>();
 
         // Load OpenCV library
@@ -104,7 +109,7 @@ public class VideoAnalyzer {
         return shortClipUrls;
     }
 
-    private String saveShortClip(String youtubeUrl, VideoWriter writer, VideoCapture capture, int frameCount, int frameWidth, int frameHeight, int fps) {
+    private String saveShortClip(String youtubeUrl, VideoWriter writer, VideoCapture capture, int frameCount, int frameWidth, int frameHeight, int fps) throws IOException {
         // Create output video file
         File outputFile = File.createTempFile("short-clip", ".mp4");
 
