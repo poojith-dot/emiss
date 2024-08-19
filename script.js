@@ -29,18 +29,22 @@ public class VideoAnalyzer {
             List<String> shortClipUrls = generateShortClips(url);
             return ResponseEntity.ok(shortClipUrls);
         } catch (Exception e) {
+            System.out.println("Error analyzing video: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
     private List<String> generateShortClips(String youtubeUrl) throws IOException {
+        System.out.println("Starting video analysis...");
         List<String> shortClipUrls = new ArrayList<>();
 
         // Load OpenCV library
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        System.out.println("OpenCV library loaded...");
 
         // Create VideoCapture object
         VideoCapture capture = new VideoCapture(youtubeUrl);
+        System.out.println("VideoCapture object created...");
 
         // Check if video is opened
         if (!capture.isOpened()) {
@@ -106,6 +110,7 @@ public class VideoAnalyzer {
         currentFrame.release();
         difference.release();
 
+        System.out.println("Video analysis completed.");
         return shortClipUrls;
     }
 
@@ -128,6 +133,7 @@ public class VideoAnalyzer {
         // Release resources
         writer.release();
 
+        System.out.println("Short clip saved to " + outputFile.getAbsolutePath());
         return outputFile.getAbsolutePath();
     }
 }
