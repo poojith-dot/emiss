@@ -1,10 +1,37 @@
 <!DOCTYPE html>
-<html lang ="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouTube Video Downloader</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #quality-container {
+            display: none;
+        }
+        #quality-select {
+            width: 200px;
+            height: 30px;
+            font-size: 16px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #download-quality-btn {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #download-quality-btn:hover {
+            background-color: #3e8e41;
+        }
+    </style>
 </head>
 <body>
     <h1>YouTube Video Downloader</h1>
@@ -12,11 +39,63 @@
         <input type="text" id="youtube-link" placeholder="Enter YouTube video link">
         <button id="download-btn">Download</button>
     </form>
-    <div id="download-path-container">
-        <label for="download-path">Choose download path:</label>
-        <input type="text" id="download-path" placeholder="Enter download path">
-        <button id="browse-btn">Browse</button>
+    <div id="quality-container">
+        <p>Select video quality:</p>
+        <select id="quality-select"></select>
+        <button id="download-quality-btn">Download</button>
     </div>
-    <script src="script.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/youtube-dl@3.12.1/dist/youtube-dl.min.js"></script>
+    <script>
+        const youtubeLinkInput = document.getElementById('youtube-link');
+        const downloadBtn = document.getElementById('download-btn');
+        const qualityContainer = document.getElementById('quality-container');
+        const qualitySelect = document.getElementById('quality-select');
+        const downloadQualityBtn = document.getElementById('download-quality-btn');
+
+        downloadBtn.addEventListener('click', async () => {
+            const youtubeLink = youtubeLinkInput.value.trim();
+            if (!youtubeLink) {
+                alert('Please enter a YouTube video link');
+                return;
+            }
+
+            try {
+                const video = await youtubeDL(youtubeLink);
+                const videoQualities = video.formats.filter(format => format.qualityLabel);
+                if (videoQualities.length === 0) {
+                    throw new Error('No video qualities available');
+                }
+
+                qualitySelect.innerHTML = '';
+                videoQualities.forEach(quality => {
+                    const option = document.createElement('option');
+                    option.value = quality.url;
+                    option.textContent = quality.qualityLabel;
+                    qualitySelect.appendChild(option);
+                });
+
+                qualityContainer.style.display = 'block';
+                downloadQualityBtn.addEventListener('click', async () => {
+                    const qualityUrl = qualitySelect.value;
+                    if (!qualityUrl) {
+                        alert('Please select a video quality');
+                        return;
+                    }
+
+                    const videoUrl = await youtubeDL(qualityUrl);
+                    const videoTitle = video.title;
+
+                    const a = document.createElement('a');
+                    a.href = videoUrl;
+                    a.download = `${videoTitle}.mp4`;
+                    a.click();
+                });
+            } catch (error) {
+                console.error(error);
+                alert('Error downloading video');
+            }
+        });
+    </script>
 </body>
 </html>
