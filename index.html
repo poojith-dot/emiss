@@ -1,118 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang ="en">
 <head>
-    <title>Video Analyzer</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #3e8e41;
-        }
-
-        .shorts-container, .random-game-video-container {
-            margin-top: 40px;
-        }
-
-        .shorts-container h2, .random-game-video-container h2 {
-            margin-bottom: 10px;
-        }
-
-        #shorts, #randomGameVideo {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .short-video {
-            width: 200px;
-            margin: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 10px;
-        }
-
-        .short-video video {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 5px;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Downloader</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Video Analyzer</h1>
-        <input type="text" id="videoUrl" placeholder="Enter YouTube video URL">
-        <button id="analyze">Analyze</button>
-        <div class="shorts-container">
-            <h2>Short Clips</h2>
-            <div id="shorts"></div>
-        </div>
-        <div class="random-game-video-container">
-            <h2>Random Game Video</h2>
-            <div id="randomGameVideo"></div>
-        </div>
+    <h1>YouTube Video Downloader</h1>
+    <form>
+        <input type="text" id="youtube-link" placeholder="Enter YouTube video link">
+        <button id="download-btn">Download</button>
+    </form>
+    <div id="download-path-container">
+        <label for="download-path">Choose download path:</label>
+        <input type="text" id="download-path" placeholder="Enter download path">
+        <button id="browse-btn">Browse</button>
     </div>
-    <script>
-        const analyzeButton = document.getElementById('analyze');
-        const videoUrlInput = document.getElementById('videoUrl');
-        const shortsContainer = document.getElementById('shorts');
-        const randomGameVideoContainer = document.getElementById('randomGameVideo');
-
-        analyzeButton.addEventListener('click', () => {
-            const videoUrl = videoUrlInput.value;
-
-            fetch('http://localhost:8080/analyze', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ url: videoUrl }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                const shortClips = data;
-
-                shortClips.forEach(clipUrl => {
-                    const video = document.createElement('video');
-                    video.src = clipUrl; // Replace with actual video source
-                    video.controls = true;
-                    video.classList.add('short-video');
-                    shortsContainer.appendChild(video);
-                });
-            })
-            .catch(error => console.error('Error:', error));
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
