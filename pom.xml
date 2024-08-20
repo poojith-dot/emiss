@@ -1,0 +1,9 @@
+<!-- Maven -->
+<dependency>
+    <groupId>com.github.kotlin-stdlib</groupId>
+    <artifactId>youtubedl</artifactId>
+    <version>1.2.1</version>
+</dependency>
+
+<!-- Gradle -->
+implementation 'com.github.kotlin-stdlib:youtubedl:1.2.1'
